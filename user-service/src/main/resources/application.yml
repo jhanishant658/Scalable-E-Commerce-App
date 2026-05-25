@@ -1,0 +1,39 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:postgresql://ep-steep-heart-apsr7lhj-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require
+    username: neondb_owner
+    password: npg_nVvwpj38arlm
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update        # use 'validate' + Flyway in prod
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+# ─── JWT Config ───────────────────────────────────────────────────────────────
+jwt:
+  access-token:
+    # Min 64 chars for HS512 — change in prod, use env var: JWT_ACCESS_SECRET
+    secret: "your-super-secret-access-token-key-must-be-at-least-64-characters-long!!"
+    expiration-ms: 900000        # 15 minutes
+
+  refresh-token:
+    # Different secret for refresh tokens — use env var: JWT_REFRESH_SECRET
+    secret: "your-super-secret-refresh-token-key-must-be-at-least-64-characters-long!!"
+    expiration-ms: 604800000     # 7 days
+
+# ─── Logging ──────────────────────────────────────────────────────────────────
+logging:
+  level:
+    com.ecommerce.userservice: DEBUG
+    org.springframework.security: WARN
