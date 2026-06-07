@@ -1,0 +1,25 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: ${ORDER_DB_URL:jdbc:postgresql://localhost:5432/ecommerce_orders}
+    username: ${ORDER_DB_USERNAME:postgres}
+    password: ${ORDER_DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+resilience4j.circuitbreaker.instances.default:
+  sliding-window-size: 10
+  failure-rate-threshold: 50
+  wait-duration-in-open-state: 10s

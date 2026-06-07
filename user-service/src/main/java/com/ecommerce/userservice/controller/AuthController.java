@@ -5,52 +5,41 @@ import com.ecommerce.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final UserService userService;
 
-    /**
-     * POST /api/v1/auth/signup
-     * Registers a new user and returns JWT tokens.
-     * Validation is handled by the API Gateway layer.
-     */
-    @PostMapping("/signup")
+    @PostMapping("/api/v1/auth/signup")
     public ResponseEntity<UserDto.AuthResponse> signup(@RequestBody UserDto.SignupRequest request) {
-        UserDto.AuthResponse response = userService.signup(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.signup(request));
     }
 
-    /**
-     * POST /api/v1/auth/login
-     * Authenticates existing user and returns JWT tokens.
-     */
-    @PostMapping("/login")
+    @PostMapping("/api/v1/auth/login")
     public ResponseEntity<UserDto.AuthResponse> login(@RequestBody UserDto.LoginRequest request) {
-        UserDto.AuthResponse response = userService.login(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.login(request));
     }
 
-    /**
-     * POST /api/v1/auth/refresh
-     * Issues new access token using a valid refresh token.
-     */
-    @PostMapping("/refresh")
-    public ResponseEntity<UserDto.AuthResponse> refresh(@RequestBody UserDto.RefreshTokenRequest request) {
-        UserDto.AuthResponse response = userService.refreshToken(request);
-        return ResponseEntity.ok(response);
+    @GetMapping("/api/v1/users/{userId}")
+    public ResponseEntity<UserDto.UserResponse> profile(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getProfile(userId));
     }
 
-    /**
-     * GET /api/v1/auth/health
-     * Simple health check — useful for service discovery & gateway readiness.
-     */
-    @GetMapping("/health")
-    public ResponseEntity<String> health() {
-        return ResponseEntity.ok("UserService is up");
+    @PutMapping("/api/v1/users/{userId}")
+    public ResponseEntity<UserDto.UserResponse> updateProfile(@PathVariable Long userId, @RequestBody UserDto.ProfileUpdateRequest request) {
+        return ResponseEntity.ok(userService.updateProfile(userId, request));
+    }
+
+    @GetMapping("/api/v1/auth/health")
+    public String health() {
+        return "user-service is running";
     }
 }
